@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  concourse-db:
+    container_name: concourse-db
+    environment:
+      POSTGRES_DB: concourse
+      POSTGRES_USER: concourse
+      POSTGRES_PASSWORD: changeme
+      PGDATA: /database
+    image: postgres:9.6
+
+  concourse-web:
+    container_name: concourse-web
+    command: web
+    environment:
+      CONCOURSE_BASIC_AUTH_USERNAME: concourse
+      CONCOURSE_BASIC_AUTH_PASSWORD: changeme
+      # CONCOURSE_EXTERNAL_URL: "${CONCOURSE_EXTERNAL_URL}"
+      CONCOURSE_EXTERNAL_URL: "http://127.0.0.1:8080"
+      CONCOURSE_POSTGRES_HOST: concourse-db
+      CONCOURSE_POSTGRES_USER: concourse
+      CONCOURSE_POSTGRES_PASSWORD: changeme
+      CONCOURSE_POSTGRES_DATABASE: concourse
+    restart: unless-stopped 
+    image: concourse/concourse:latest
+    ports: 
+      - 8080:8080
+    volumes: 
+      - ./keys/web:/concourse-keys
+
+  concourse-worker:
+    container_name: concourse-worker
+    command: worker
+    environment:
+      CONCOURSE_TSA_HOST: concourse-web
+    image: concourse/concourse:latest
+    privileged: true
+    volumes: 
+      - ./keys/worker:/concourse-keys
+    depends_on: 
+      - concourse-web
