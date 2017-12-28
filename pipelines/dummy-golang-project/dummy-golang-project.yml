@@ -1,0 +1,27 @@
+resources:
+- name: dummy-golang-project-github
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/rms1000watt/dummy-golang-project.git
+
+jobs:
+- name: build-dummy-golang-project
+  plan:
+  - get: dummy-golang-project-github
+  - task: build-and-push
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: ubuntu:16.04
+      inputs:
+      - name: dummy-golang-project-github
+      run:
+        path: bash
+        args:
+          - -exc
+          - |
+            make
+            echo "docker push here maybe"
