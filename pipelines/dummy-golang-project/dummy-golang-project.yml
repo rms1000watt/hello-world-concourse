@@ -15,13 +15,28 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: ubuntu:16.04
+          # repository: ubuntu
+          # tag: 16.04
+          repository: docker
+          tag: 17.12.0-ce
       inputs:
       - name: dummy-golang-project-github
+      # run:
+      #   path: bash
+      #   args:
+      #     - -exc
+      #     - |
+      #       apt-get update
+      #       apt-get install make -y
+      #       cd dummy-golang-project-github
+      #       make
+      #       echo "docker push here maybe"
       run:
-        path: bash
+        path: sh
         args:
           - -exc
           - |
+            apk add --update make
+            cd dummy-golang-project-github
             make
             echo "docker push here maybe"
