@@ -18,7 +18,7 @@ jobs:
           # repository: ubuntu
           # tag: 16.04
           repository: docker
-          tag: 17.12.0-ce
+          tag: 17.12.0-dind
       inputs:
       - name: dummy-golang-project-github
       # run:
