@@ -5,26 +5,20 @@ resources:
     branch: master
     uri: https://github.com/rms1000watt/dummy-golang-project.git
 
+- name: dummy-golang-project-docker
+  type: docker-image
+  source:
+    email: rms1000watt@gmail.com
+    username: rms1000watt
+    password: 
+    repository: rms1000watt/dummy-server:latest
+
 jobs:
 - name: build-dummy-golang-project
   plan:
   - get: dummy-golang-project-github
-  - task: build-and-push
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: docker
-          tag: 17.12.0-dind
-      inputs:
-      - name: dummy-golang-project-github
-      run:
-        path: sh
-        args:
-          - -exc
-          - |
-            apk add --update make
-            cd dummy-golang-project-github
-            make
-            echo "docker push here maybe"
+  - put: dummy-golang-project-docker
+    params:
+      build: .
+      build_args:
+        GOLANG_DOCKER_VERSION: 1.9.2-alpine3.7

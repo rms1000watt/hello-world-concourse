@@ -55,6 +55,9 @@ open http://localhost:8080/teams/main/pipelines/hello-world
 - Click on the "+" on the top right of the screen
 - Watch the output
 
+```bash
+fly -t lite set-pipeline -p hello-world -c pipelines/dummy-golang-project/dummy-golang-project.yml
+```
 
 ## TODO
 
