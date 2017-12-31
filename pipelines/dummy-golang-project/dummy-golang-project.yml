@@ -11,7 +11,7 @@ resources:
     email: rms1000watt@gmail.com
     username: rms1000watt
     password: 
-    repository: rms1000watt/dummy-server:latest
+    repository: rms1000watt/dummy-golang-project
 
 jobs:
 - name: build-dummy-golang-project
@@ -19,6 +19,6 @@ jobs:
   - get: dummy-golang-project-github
   - put: dummy-golang-project-docker
     params:
-      build: .
+      build: dummy-golang-project-github
       build_args:
         GOLANG_DOCKER_VERSION: 1.9.2-alpine3.7
