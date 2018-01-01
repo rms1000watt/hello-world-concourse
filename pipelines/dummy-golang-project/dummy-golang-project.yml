@@ -5,12 +5,18 @@ resources:
     branch: master
     uri: https://github.com/rms1000watt/dummy-golang-project.git
 
+- name: dummy-projects-integration-github
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/rms1000watt/dummy-projects-integration.git
+
 - name: dummy-golang-project-docker
   type: docker-image
   source:
-    email: rms1000watt@gmail.com
-    username: rms1000watt
-    password: 
+    email: {{docker-email}}
+    username: {{docker-user}}
+    password: {{docker-pass}}
     repository: rms1000watt/dummy-golang-project
 
 jobs:
@@ -21,4 +27,36 @@ jobs:
     params:
       build: dummy-golang-project-github
       build_args:
-        GOLANG_DOCKER_VERSION: 1.9.2-alpine3.7
+        GO_DOCKER_VERSION: 1.9.2-alpine3.7
+
+- name: integration-test
+  plan:
+  - get: dummy-projects-integration-github
+  - get: dummy-golang-project-docker
+    passed: 
+    - build-dummy-golang-project
+    trigger: true
+  - task: run-and-test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: amidos/dcind
+          tag: latest
+      inputs:
+        - name: dummy-projects-integration-github
+        - name: dummy-golang-project-docker
+      run:
+        path: sh
+        args:
+          - -exc
+          - |
+            source /docker-lib.sh
+            start_docker
+            cd dummy-projects-integration-github
+            cat docker-compose.yml
+            docker-compose up -d
+            docker images
+            docker ps
+            ./test.sh
