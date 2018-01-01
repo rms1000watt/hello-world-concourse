@@ -37,6 +37,7 @@ jobs:
     - build-dummy-golang-project
     trigger: true
   - task: run-and-test
+    privileged: true
     config:
       platform: linux
       image_resource:
